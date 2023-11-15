@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/losisin/helm-docs-github-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/losisin/helm-docs-github-action/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/losisin/helm-docs-github-action/graph/badge.svg?token=0QQVCFJH84)](https://codecov.io/gh/losisin/helm-docs-github-action)
-[![Static Badge](https://img.shields.io/badge/licence%20-%20MIT-green)](https://github.com/losisin/helm-docs-github-action/blob/add-Makefile/LICENSE)
+[![Static Badge](https://img.shields.io/badge/licence%20-%20MIT-green)](https://github.com/losisin/helm-docs-github-action/blob/main/LICENSE)
 [![GitHub release (with filter)](https://img.shields.io/github/v/release/losisin/helm-docs-github-action)](https://github.com/losisin/helm-docs-github-action/releases)
 
 Install [helm-docs](https://github.com/norwoodj/helm-docs) tool and auto-generate Markdown documentation from Helm charts. It always uses latetst version of `helm-docs`.
