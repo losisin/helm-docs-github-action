@@ -1,4 +1,4 @@
-name: Helm DocsGitHub Action
+name: Helm Docs GitHub Action
 author: losisin
 description: A GitHub action for generating markdown documentation using helm-docs
 inputs:
