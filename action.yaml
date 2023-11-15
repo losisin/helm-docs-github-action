@@ -1,0 +1,45 @@
+name: Helm DocsGitHub Action
+author: losisin
+description: A GitHub action for generating markdown documentation using helm-docs
+inputs:
+  chart-search-root:
+    description: The root directory to search recursively within for charts
+    required: false
+    default: "."
+  values-file:
+    description: Path to values file
+    required: false
+    default: "values.yaml"
+  output-file:
+    description: Markdown file path relative to each chart directory to which rendered documentation will be written
+    required: false
+    default: "README.md"
+  git-push:
+    description: If true it will commit and push the changes (ignored if `fail-on-diff` is set)
+    required: false
+    default: 'false'
+  git-push-user-name:
+    description: If empty the name of the GitHub Actions bot will be used (i.e. `github-actions[bot]`)
+    required: false
+    default: "github-actions[bot]"
+  git-push-user-email:
+    description: If empty the no-reply email of the GitHub Actions bot will be used (i.e. `github-actions[bot]@users.noreply.github.com`)
+    required: false
+    default: "github-actions[bot]@users.noreply.github.com"
+  git-commit-message:
+    description: Commit message
+    required: false
+    default: "update Helm documentation"
+  fail-on-diff:
+    description: Fail the job if there is any diff found between the generated output and existing file
+    required: false
+    default: 'false'
+outputs:
+   helm-docs-path:
+      description: 'Path to the cached helm-docs binary'
+runs:
+  using: node20
+  main: dist/index.js
+branding:
+  icon: file-text
+  color: gray-dark
