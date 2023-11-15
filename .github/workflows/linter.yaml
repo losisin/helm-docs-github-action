@@ -43,3 +43,4 @@ jobs:
           VALIDATE_JSCPD: false
           VALIDATE_EDITORCONFIG: false
           FILTER_REGEX_EXCLUDE: 'dist/licenses.txt'
+          YAML_CONFIG_FILE: '.github/linters/.yaml-lint.yaml'
