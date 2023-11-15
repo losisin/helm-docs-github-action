@@ -5,8 +5,7 @@
 [![Static Badge](https://img.shields.io/badge/licence%20-%20MIT-green)](https://github.com/losisin/helm-docs-github-action/blob/add-Makefile/LICENSE)
 [![GitHub release (with filter)](https://img.shields.io/github/v/release/losisin/helm-docs-github-action)](https://github.com/losisin/helm-docs-github-action/releases)
 
-
-Install [helm-docs](https://github.com/norwoodj/helm-docs) tool and auto-generate markdown documentation from Helm charts. It always uses latetst version of `helm-docs`.
+Install [helm-docs](https://github.com/norwoodj/helm-docs) tool and auto-generate Markdown documentation from Helm charts. It always uses latetst version of `helm-docs`.
 
 ## Usage
 
@@ -28,7 +27,7 @@ jobs:
 ```
 
 > [!NOTE]
-> This will only generate markdown documentation but no further action will be taken.
+> This will only generate Markdown documentation but no further action will be taken.
 
 ## Inputs
 

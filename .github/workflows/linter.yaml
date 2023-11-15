@@ -42,4 +42,5 @@ jobs:
           TYPESCRIPT_DEFAULT_STYLE: prettier
           VALIDATE_JSCPD: false
           VALIDATE_EDITORCONFIG: false
+          VALIDATE_KUBERNETES_KUBECONFORM: false
           FILTER_REGEX_EXCLUDE: 'dist/licenses.txt'
