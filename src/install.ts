@@ -5,7 +5,6 @@ import * as fs from 'fs'
 import * as tc from '@actions/tool-cache'
 
 const helmDocs = 'helm-docs'
-// const version = 'v1.11.3'
 
 export function getHelmDocs(version: string): string {
   const osArch = os.arch()

@@ -15,19 +15,16 @@ jest.mock('@actions/tool-cache', () => ({
   cacheDir: jest.fn().mockResolvedValue('/mocked/path/cachedDir')
 }))
 
-describe('getHelmDocs tests', () => {
-  let helmDocs: string
-  let version: string
+const helmDocs = 'helm-docs'
+const version = 'v1.11.3'
 
+describe('getHelmDocs tests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-
-    helmDocs = 'helm-docs'
-    version = 'v1.11.3'
   })
 
   it('should return the correct url for Windows_NT and arm64 arch', () => {
-    const osType = 'windows'
+    const osType = 'Windows_NT'
     const osArch = 'arm64'
     const windowsURL = util.format(
       'https://github.com/losisin/%s/releases/download/%s/%s_%s_%s_%s.tgz',
@@ -88,14 +85,9 @@ describe('getHelmDocs tests', () => {
 })
 
 describe('installHelmDocs', () => {
-  let helmDocs: string
-  let version: string
-
   beforeEach(() => {
+    jest.resetModules()
     jest.clearAllMocks()
-
-    helmDocs = 'helm-docs'
-    version = 'v1.11.3'
   })
 
   it('installs helm-docs if it is not already cached', async () => {
@@ -136,9 +128,14 @@ describe('installHelmDocs', () => {
     expect(tc.cacheDir).not.toHaveBeenCalled()
   })
 })
+
 describe('findHelmDocs', () => {
+  beforeEach(() => {
+    jest.resetModules()
+    jest.clearAllMocks()
+  })
   it('finds the correct file in the directory', () => {
-    ;(os.type as jest.Mock).mockReturnValue('Linux')
+    ;(os.type as jest.Mock).mockReturnValue('Darwin')
     ;(fs.readdirSync as jest.Mock).mockReturnValue(['helm-docs'])
     ;(fs.statSync as jest.Mock).mockReturnValue({ isDirectory: () => false })
 
@@ -166,7 +163,7 @@ describe('findHelmDocs', () => {
   })
 
   it('throws error when plugin file is not found', () => {
-    ;(os.type as jest.Mock).mockReturnValue('Linux')
+    ;(os.type as jest.Mock).mockReturnValue('Windows_NT')
     ;(fs.readdirSync as jest.Mock).mockReturnValue(['notSchema'])
     ;(fs.statSync as jest.Mock).mockReturnValue({ isDirectory: () => false })
 
