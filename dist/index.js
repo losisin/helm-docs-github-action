@@ -33732,7 +33732,6 @@ const util = __importStar(__nccwpck_require__(3837));
 const fs = __importStar(__nccwpck_require__(7147));
 const tc = __importStar(__nccwpck_require__(7784));
 const helmDocs = 'helm-docs';
-// const version = 'v1.11.3'
 function getHelmDocs(version) {
     const osArch = os.arch();
     const osType = os.type();
@@ -33750,9 +33749,6 @@ async function installHelmDocs(version) {
         cachedToolPath = await tc.cacheDir(unTaredPath, helmDocs, version);
     }
     const helmDocsPath = findHelmDocs(cachedToolPath);
-    if (!helmDocsPath) {
-        throw new Error(util.format('helm-docs not found in path: ${cachedToolPath}'));
-    }
     fs.chmodSync(helmDocsPath, '777');
     return helmDocsPath;
 }
@@ -33869,7 +33865,6 @@ async function run() {
         }
     }
     catch (error) {
-        // Fail the workflow run if an error occurs
         if (error instanceof Error)
             core.setFailed(error.message);
     }

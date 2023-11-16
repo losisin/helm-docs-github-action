@@ -34,11 +34,6 @@ export async function installHelmDocs(version: string): Promise<string> {
   }
 
   const helmDocsPath = findHelmDocs(cachedToolPath)
-  if (!helmDocsPath) {
-    throw new Error(
-      util.format('helm-docs not found in path: ${cachedToolPath}')
-    )
-  }
 
   fs.chmodSync(helmDocsPath, '777')
   return helmDocsPath

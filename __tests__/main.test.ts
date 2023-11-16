@@ -164,4 +164,41 @@ describe('run function', () => {
 
     expect(core.setFailed).toHaveBeenCalledWith(errorMessage)
   })
+
+  it("should handle both git-push and fail-on-diff set to 'false', but schema generated", async () => {
+    installHelmDocsMock.mockResolvedValue('/mocked/path')
+    const inputMap: { [key: string]: string } = {
+      'git-push': 'false',
+      'fail-on-diff': 'false',
+      'output-file': 'output-file',
+      'values-file': 'values-file',
+      'chart-search-root': 'chart-search-root'
+    }
+
+    getInputMock.mockImplementation((inputName: string) => {
+      return inputMap[inputName]
+    })
+
+    const gitMock: jest.Mocked<SimpleGit> = {
+      status: jest.fn().mockResolvedValue({
+        files: [{ path: 'output-file' }]
+      })
+    } as any
+
+    simpleGitMock.mockReturnValue(gitMock)
+
+    await run()
+
+    expect(installHelmDocsMock).toHaveBeenCalledTimes(1)
+    expect(getInputMock).toHaveBeenCalledWith('values-file')
+    expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
+    expect(getInputMock).toHaveBeenCalledWith('output-file')
+    expect(getInputMock).toHaveBeenCalledWith('git-push')
+    expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
+    expect(execMock).toHaveBeenCalledTimes(1)
+    expect(gitMock.status).toHaveBeenCalledTimes(1)
+    expect(infoMock).toHaveBeenLastCalledWith(
+      "'output-file' has changed, but no action was requested."
+    )
+  })
 })
