@@ -12,10 +12,9 @@ const version = 'v1.11.3'
  */
 export async function run(): Promise<void> {
   try {
-    const chartSearchRoot =
-      core.getInput('chart-search-root') || '__tests__/fixtures'
-    const valuesFile = core.getInput('values-file') || 'values.yaml'
-    const outputFile = core.getInput('output-file') || 'README.md'
+    const chartSearchRoot = core.getInput('chart-search-root')
+    const valuesFile = core.getInput('values-file')
+    const outputFile = core.getInput('output-file')
     const gitPush = core.getInput('git-push')
     const gitPushUserName = core.getInput('git-push-user-name')
     const gitPushUserEmail = core.getInput('git-push-user-email')
