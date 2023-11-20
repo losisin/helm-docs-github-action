@@ -8890,6 +8890,21 @@ var init_commit = __esm({
   }
 });
 
+// src/lib/tasks/first-commit.ts
+function first_commit_default() {
+  return {
+    firstCommit() {
+      return this._runTask(straightThroughStringTask(["rev-list", "--max-parents=0", "HEAD"], true), trailingFunctionArgument(arguments));
+    }
+  };
+}
+var init_first_commit = __esm({
+  "src/lib/tasks/first-commit.ts"() {
+    init_utils();
+    init_task();
+  }
+});
+
 // src/lib/tasks/hash-object.ts
 function hashObjectTask(filePath, write) {
   const commands = ["hash-object", filePath];
@@ -9910,6 +9925,7 @@ var init_simple_git_api = __esm({
     init_checkout();
     init_commit();
     init_config();
+    init_first_commit();
     init_grep();
     init_hash_object();
     init_init();
@@ -9983,7 +9999,7 @@ var init_simple_git_api = __esm({
         return this._runTask(statusTask(getTrailingOptions(arguments)), trailingFunctionArgument(arguments));
       }
     };
-    Object.assign(SimpleGitApi.prototype, checkout_default(), commit_default(), config_default(), grep_default(), log_default(), show_default(), version_default());
+    Object.assign(SimpleGitApi.prototype, checkout_default(), commit_default(), config_default(), first_commit_default(), grep_default(), log_default(), show_default(), version_default());
   }
 });
 
