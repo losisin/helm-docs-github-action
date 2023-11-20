@@ -40,9 +40,6 @@ describe('run function', () => {
     installHelmDocsMock = installHelmDocs as unknown as jest.MockedFunction<
       typeof installHelmDocs
     >
-
-    process.env['PATH'] = '/usr/local/bin'
-    process.env['GITHUB_WORKSPACE'] = '/github/workspace'
   })
 
   it('should handle success scenario', async () => {
