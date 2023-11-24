@@ -125,6 +125,7 @@ Your input matters. Feel free to open [issues](https://github.com/losisin/helm-d
 ### How to Contribute
 
 🌟 Thank you for considering contributing to my project! Your efforts are incredibly valuable. To get started:
+
 1. Fork the repository.
 2. Create your feature branch: `git checkout -b feature/YourFeature`
 3. Commit your changes: `git commit -am 'Add: YourFeature'`
