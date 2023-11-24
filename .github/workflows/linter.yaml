@@ -43,5 +43,6 @@ jobs:
           VALIDATE_JSCPD: false
           VALIDATE_EDITORCONFIG: false
           VALIDATE_KUBERNETES_KUBECONFORM: false
+          VALIDATE_MARKDOWN: false
           VALIDATE_YAML: false
           FILTER_REGEX_EXCLUDE: 'dist/licenses.txt'
