@@ -145,7 +145,7 @@ describe('run function', () => {
       'user.email',
       'user@email.com'
     )
-    expect(gitMock.add).toHaveBeenCalledWith(['output-file'])
+    expect(gitMock.add).toHaveBeenCalledWith(['chart-search-root/output-file'])
     expect(gitMock.commit).toHaveBeenCalledWith('message')
     expect(gitMock.push).toHaveBeenCalledTimes(1)
     expect(setOutputMock).toHaveBeenCalledWith('helm-docs', '/mocked/path')
