@@ -63,16 +63,20 @@ describe('run function', () => {
 
   it("should handle fail-on-diff === 'true'", async () => {
     installHelmDocsMock.mockResolvedValue('/mocked/path')
+    const inputMap: { [key: string]: string } = {
+      'fail-on-diff': 'true',
+      'output-file': 'output-file',
+      'values-file': 'values-file',
+      'chart-search-root': 'chart-search-root'
+    }
+
     getInputMock.mockImplementation((inputName: string) => {
-      if (inputName === 'fail-on-diff') {
-        return 'true'
-      }
-      return 'a-random-string'
+      return inputMap[inputName]
     })
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
-        files: [{ path: 'a-random-string' }]
+        files: [{ path: 'chart-search-root/output-file' }]
       })
     } as any
 
@@ -88,7 +92,7 @@ describe('run function', () => {
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
 
-    expect(setFailedMock).toHaveBeenCalledWith("'a-random-string' has changed")
+    expect(setFailedMock).toHaveBeenCalledWith("'output-file' has changed")
   })
 
   it("should handle git-push === 'true'", async () => {
@@ -109,7 +113,7 @@ describe('run function', () => {
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
-        files: [{ path: 'output-file' }]
+        files: [{ path: 'chart-search-root/output-file' }]
       }),
       addConfig: jest.fn().mockResolvedValue(undefined),
       add: jest.fn().mockResolvedValue(undefined),
@@ -178,7 +182,7 @@ describe('run function', () => {
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
-        files: [{ path: 'output-file' }]
+        files: [{ path: 'chart-search-root/output-file' }]
       })
     } as any
 
