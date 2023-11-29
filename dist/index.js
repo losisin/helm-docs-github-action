@@ -33858,7 +33858,7 @@ async function run() {
         ]);
         const git = (0, simple_git_1.simpleGit)();
         const statusSummary = await git.status();
-        const outputStatus = statusSummary.files.find(file => file.path === outputFile);
+        const outputStatus = statusSummary.files.find(file => file.path === path.join(chartSearchRoot, '/', outputFile));
         if (outputStatus) {
             switch (true) {
                 case failOnDiff === 'true':

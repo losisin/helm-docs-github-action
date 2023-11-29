@@ -44,7 +44,7 @@ export async function run(): Promise<void> {
     const statusSummary = await git.status()
 
     const outputStatus = statusSummary.files.find(
-      file => file.path === outputFile
+      file => file.path === path.join(chartSearchRoot, '/', outputFile)
     )
     if (outputStatus) {
       switch (true) {
