@@ -5,7 +5,7 @@
 [![Static Badge](https://img.shields.io/badge/licence%20-%20MIT-green)](https://github.com/losisin/helm-docs-github-action/blob/main/LICENSE)
 [![GitHub release (with filter)](https://img.shields.io/github/v/release/losisin/helm-docs-github-action)](https://github.com/losisin/helm-docs-github-action/releases)
 
-Install [helm-docs](https://github.com/norwoodj/helm-docs) tool and auto-generate Markdown documentation from Helm charts. It always uses latetst version of `helm-docs`.
+Install [helm-docs](https://github.com/norwoodj/helm-docs) tool and auto-generate Markdown documentation from Helm charts. It always uses latest version of `helm-docs`.
 
 ## Usage
 
