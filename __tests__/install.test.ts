@@ -164,7 +164,7 @@ describe('findHelmDocs', () => {
 
   it('throws error when plugin file is not found', () => {
     ;(os.type as jest.Mock).mockReturnValue('Windows_NT')
-    ;(fs.readdirSync as jest.Mock).mockReturnValue(['notSchema'])
+    ;(fs.readdirSync as jest.Mock).mockReturnValue(['notHelmDocs'])
     ;(fs.statSync as jest.Mock).mockReturnValue({ isDirectory: () => false })
 
     expect(() => findHelmDocs('/some/dir')).toThrow(
