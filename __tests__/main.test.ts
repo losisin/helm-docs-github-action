@@ -65,9 +65,9 @@ describe('run function', () => {
     installHelmDocsMock.mockResolvedValue('/mocked/path')
     const inputMap: { [key: string]: string } = {
       'fail-on-diff': 'true',
-      'output-file': 'output-file',
-      'values-file': 'values-file',
-      'chart-search-root': 'chart-search-root'
+      'output-file': 'README.md',
+      'values-file': 'values.yaml',
+      'chart-search-root': '.'
     }
 
     getInputMock.mockImplementation((inputName: string) => {
@@ -76,7 +76,7 @@ describe('run function', () => {
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
-        files: [{ path: 'chart-search-root/output-file' }]
+        files: [{ path: './**/README.md' }]
       })
     } as any
 
@@ -92,7 +92,7 @@ describe('run function', () => {
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
 
-    expect(setFailedMock).toHaveBeenCalledWith("'output-file' has changed")
+    expect(setFailedMock).toHaveBeenCalledWith("'README.md' has changed")
   })
 
   it("should handle git-push === 'true'", async () => {
@@ -102,9 +102,9 @@ describe('run function', () => {
       'git-push-user-name': 'username',
       'git-push-user-email': 'user@email.com',
       'git-commit-message': 'message',
-      'output-file': 'output-file',
-      'values-file': 'values-file',
-      'chart-search-root': 'chart-search-root'
+      'output-file': 'README.md',
+      'values-file': 'values.yaml',
+      'chart-search-root': '.'
     }
 
     getInputMock.mockImplementation((inputName: string) => {
@@ -113,7 +113,7 @@ describe('run function', () => {
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
-        files: [{ path: 'chart-search-root/output-file' }]
+        files: [{ path: './**/README.md' }]
       }),
       addConfig: jest.fn().mockResolvedValue(undefined),
       add: jest.fn().mockResolvedValue(undefined),
@@ -145,12 +145,12 @@ describe('run function', () => {
       'user.email',
       'user@email.com'
     )
-    expect(gitMock.add).toHaveBeenCalledWith(['chart-search-root/output-file'])
+    expect(gitMock.add).toHaveBeenCalledWith(['./**/README.md'])
     expect(gitMock.commit).toHaveBeenCalledWith('message')
     expect(gitMock.push).toHaveBeenCalledTimes(1)
     expect(setOutputMock).toHaveBeenCalledWith('helm-docs', '/mocked/path')
     expect(infoMock).toHaveBeenLastCalledWith(
-      "Pushed 'output-file' to the branch."
+      "Pushed 'README.md' to the branch."
     )
   })
 
@@ -166,14 +166,14 @@ describe('run function', () => {
     expect(core.setFailed).toHaveBeenCalledWith(errorMessage)
   })
 
-  it("should handle both git-push and fail-on-diff set to 'false', but schema generated", async () => {
+  it("should handle both git-push and fail-on-diff set to 'false', but documentation generated", async () => {
     installHelmDocsMock.mockResolvedValue('/mocked/path')
     const inputMap: { [key: string]: string } = {
       'git-push': 'false',
       'fail-on-diff': 'false',
-      'output-file': 'output-file',
-      'values-file': 'values-file',
-      'chart-search-root': 'chart-search-root'
+      'output-file': 'README.md',
+      'values-file': 'values.yaml',
+      'chart-search-root': '.'
     }
 
     getInputMock.mockImplementation((inputName: string) => {
@@ -182,7 +182,7 @@ describe('run function', () => {
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
-        files: [{ path: 'chart-search-root/output-file' }]
+        files: [{ path: './**/README.md' }]
       })
     } as any
 
@@ -199,7 +199,7 @@ describe('run function', () => {
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
     expect(infoMock).toHaveBeenLastCalledWith(
-      "'output-file' has changed, but no action was requested."
+      "'README.md' has changed, but no action was requested."
     )
   })
 })
