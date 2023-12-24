@@ -1,21 +1,22 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
+  "name": "helm-docs-github-action",
+  "description": "GitHub Actions to generate documentation for Helm charts",
   "version": "0.0.0",
   "author": "",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/losisin/helm-docs-github-action",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/losisin/helm-docs-github-action.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/losisin/helm-docs-github-action/issues"
   },
   "keywords": [
     "actions",
     "node",
-    "setup"
+    "helm",
+    "documentation"
   ],
   "exports": {
     ".": "./dist/index.js"
