@@ -33826,7 +33826,7 @@ const install_1 = __nccwpck_require__(1649);
 const core = __importStar(__nccwpck_require__(2186));
 const exec = __importStar(__nccwpck_require__(1514));
 const simple_git_1 = __nccwpck_require__(9103);
-const version = 'v1.11.3';
+const version = 'v1.12.0';
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
