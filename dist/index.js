@@ -7127,6 +7127,12 @@ function pick(source, properties) {
 function delay(duration = 0) {
   return new Promise((done) => setTimeout(done, duration));
 }
+function orVoid(input) {
+  if (input === false) {
+    return void 0;
+  }
+  return input;
+}
 var import_file_exists, NULL, NOOP, objectToString;
 var init_util = __esm({
   "src/lib/utils/util.ts"() {
@@ -7393,6 +7399,7 @@ __export(utils_exports, {
   isUserFunction: () => isUserFunction,
   last: () => last,
   objectToString: () => objectToString,
+  orVoid: () => orVoid,
   parseStringResponse: () => parseStringResponse,
   pick: () => pick,
   prefixedArray: () => prefixedArray,
@@ -7827,6 +7834,29 @@ var init_config = __esm({
   }
 });
 
+// src/lib/tasks/diff-name-status.ts
+function isDiffNameStatus(input) {
+  return diffNameStatus.has(input);
+}
+var DiffNameStatus, diffNameStatus;
+var init_diff_name_status = __esm({
+  "src/lib/tasks/diff-name-status.ts"() {
+    DiffNameStatus = /* @__PURE__ */ ((DiffNameStatus2) => {
+      DiffNameStatus2["ADDED"] = "A";
+      DiffNameStatus2["COPIED"] = "C";
+      DiffNameStatus2["DELETED"] = "D";
+      DiffNameStatus2["MODIFIED"] = "M";
+      DiffNameStatus2["RENAMED"] = "R";
+      DiffNameStatus2["CHANGED"] = "T";
+      DiffNameStatus2["UNMERGED"] = "U";
+      DiffNameStatus2["UNKNOWN"] = "X";
+      DiffNameStatus2["BROKEN"] = "B";
+      return DiffNameStatus2;
+    })(DiffNameStatus || {});
+    diffNameStatus = new Set(Object.values(DiffNameStatus));
+  }
+});
+
 // src/lib/tasks/grep.ts
 function grepQueryBuilder(...params) {
   return new GrepQuery().param(...params);
@@ -7950,6 +7980,7 @@ var api_exports = {};
 __export(api_exports, {
   CheckRepoActions: () => CheckRepoActions,
   CleanOptions: () => CleanOptions,
+  DiffNameStatus: () => DiffNameStatus,
   GitConfigScope: () => GitConfigScope,
   GitConstructError: () => GitConstructError,
   GitError: () => GitError,
@@ -7971,6 +8002,7 @@ var init_api = __esm({
     init_check_is_repo();
     init_clean();
     init_config();
+    init_diff_name_status();
     init_grep();
     init_reset();
   }
@@ -9026,6 +9058,7 @@ var init_parse_diff_summary = __esm({
   "src/lib/parsers/parse-diff-summary.ts"() {
     init_log_format();
     init_DiffSummary();
+    init_diff_name_status();
     init_utils();
     statParser = [
       new LineParser(/(.+)\s+\|\s+(\d+)(\s+[+\-]+)?$/, (result, [file, changes, alterations = ""]) => {
@@ -9091,11 +9124,12 @@ var init_parse_diff_summary = __esm({
       })
     ];
     nameStatusParser = [
-      new LineParser(/([ACDMRTUXB])\s*(.+)$/, (result, [_status, file]) => {
+      new LineParser(/([ACDMRTUXB])([0-9]{0,3})\t(.[^\t]*)(\t(.[^\t]*))?$/, (result, [status, _similarity, from, _to, to]) => {
         result.changed++;
         result.files.push({
-          file,
+          file: to != null ? to : from,
           changes: 0,
+          status: orVoid(isDiffNameStatus(status) && status),
           insertions: 0,
           deletions: 0,
           binary: false
