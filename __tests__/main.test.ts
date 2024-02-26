@@ -125,7 +125,7 @@ describe('run function', () => {
 
     await run()
 
-    expect(installHelmDocsMock).toHaveBeenCalledWith('v1.12.0')
+    expect(installHelmDocsMock).toHaveBeenCalledWith('v1.13.0')
     expect(getInputMock).toHaveBeenCalledWith('values-file')
     expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
     expect(getInputMock).toHaveBeenCalledWith('output-file')
