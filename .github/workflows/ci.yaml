@@ -47,6 +47,7 @@ jobs:
         with:
           files: ./coverage/lcov.info
           flags: unittests
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   test-action:
     name: GitHub Actions Test
