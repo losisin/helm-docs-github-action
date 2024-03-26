@@ -113,7 +113,7 @@ describe('run function', () => {
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
-        files: [{ path: './**/README.md' }]
+        files: [{ path: './README.md' }]
       }),
       addConfig: jest.fn().mockResolvedValue(undefined),
       add: jest.fn().mockResolvedValue(undefined),
@@ -145,7 +145,7 @@ describe('run function', () => {
       'user.email',
       'user@email.com'
     )
-    expect(gitMock.add).toHaveBeenCalledWith(['./**/README.md'])
+    expect(gitMock.add).toHaveBeenCalledWith(['./README.md'])
     expect(gitMock.commit).toHaveBeenCalledWith('message')
     expect(gitMock.push).toHaveBeenCalledTimes(1)
     expect(setOutputMock).toHaveBeenCalledWith('helm-docs', '/mocked/path')

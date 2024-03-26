@@ -34890,7 +34890,7 @@ async function run() {
                 case gitPush === 'true':
                     await git.addConfig('user.name', gitPushUserName);
                     await git.addConfig('user.email', gitPushUserEmail);
-                    await git.add([`${chartSearchRoot}/**/${outputFile}`]);
+                    await git.add([`${chartSearchRoot}/${outputFile}`]);
                     await git.commit(gitCommitMessage);
                     await git.push();
                     core.info(`Pushed '${outputFile}' to the branch.`);
