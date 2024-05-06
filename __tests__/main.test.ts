@@ -59,6 +59,8 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
+
+    expect(infoMock).toHaveBeenCalledWith("'false' is up to date.")
   })
 
   it("should handle fail-on-diff === 'true'", async () => {
@@ -145,7 +147,7 @@ describe('run function', () => {
       'user.email',
       'user@email.com'
     )
-    expect(gitMock.add).toHaveBeenCalledWith(['./README.md'])
+    expect(gitMock.add).toHaveBeenCalledWith('./README.md')
     expect(gitMock.commit).toHaveBeenCalledWith('message')
     expect(gitMock.push).toHaveBeenCalledTimes(1)
     expect(setOutputMock).toHaveBeenCalledWith('helm-docs', '/mocked/path')

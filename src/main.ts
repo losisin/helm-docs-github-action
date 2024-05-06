@@ -43,11 +43,11 @@ export async function run(): Promise<void> {
     const git = simpleGit()
     const statusSummary = await git.status()
 
-    const outputStatus = statusSummary.files.find(file =>
+    const outputStatus = statusSummary.files.filter(file =>
       file.path.endsWith(outputFile)
     )
 
-    if (outputStatus) {
+    if (outputStatus.length > 0) {
       switch (true) {
         case failOnDiff === 'true':
           core.setFailed(`'${outputFile}' has changed`)
@@ -55,7 +55,9 @@ export async function run(): Promise<void> {
         case gitPush === 'true':
           await git.addConfig('user.name', gitPushUserName)
           await git.addConfig('user.email', gitPushUserEmail)
-          await git.add([`${chartSearchRoot}/${outputFile}`])
+          for (const file of outputStatus) {
+            await git.add(file.path)
+          }
           await git.commit(gitCommitMessage)
           await git.push()
           core.info(`Pushed '${outputFile}' to the branch.`)

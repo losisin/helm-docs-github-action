@@ -35153,8 +35153,8 @@ async function run() {
         ]);
         const git = (0, simple_git_1.simpleGit)();
         const statusSummary = await git.status();
-        const outputStatus = statusSummary.files.find(file => file.path.endsWith(outputFile));
-        if (outputStatus) {
+        const outputStatus = statusSummary.files.filter(file => file.path.endsWith(outputFile));
+        if (outputStatus.length > 0) {
             switch (true) {
                 case failOnDiff === 'true':
                     core.setFailed(`'${outputFile}' has changed`);
@@ -35162,7 +35162,9 @@ async function run() {
                 case gitPush === 'true':
                     await git.addConfig('user.name', gitPushUserName);
                     await git.addConfig('user.email', gitPushUserEmail);
-                    await git.add([`${chartSearchRoot}/${outputFile}`]);
+                    for (const file of outputStatus) {
+                        await git.add(file.path);
+                    }
                     await git.commit(gitCommitMessage);
                     await git.push();
                     core.info(`Pushed '${outputFile}' to the branch.`);
