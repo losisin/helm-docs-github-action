@@ -35154,7 +35154,7 @@ async function run() {
         const git = (0, simple_git_1.simpleGit)();
         const statusSummary = await git.status();
         const outputStatus = statusSummary.files.filter(file => file.path.endsWith(outputFile));
-        if (outputStatus) {
+        if (outputStatus.length > 0) {
             switch (true) {
                 case failOnDiff === 'true':
                     core.setFailed(`'${outputFile}' has changed`);

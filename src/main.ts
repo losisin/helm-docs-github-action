@@ -47,7 +47,7 @@ export async function run(): Promise<void> {
       file.path.endsWith(outputFile)
     )
 
-    if (outputStatus) {
+    if (outputStatus.length > 0) {
       switch (true) {
         case failOnDiff === 'true':
           core.setFailed(`'${outputFile}' has changed`)

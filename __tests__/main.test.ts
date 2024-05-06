@@ -59,6 +59,8 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
+
+    expect(infoMock).toHaveBeenCalledWith("'false' is up to date.")
   })
 
   it("should handle fail-on-diff === 'true'", async () => {
