@@ -35087,7 +35087,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.findHelmDocs = exports.installHelmDocs = exports.getHelmDocs = void 0;
+exports.getHelmDocs = getHelmDocs;
+exports.installHelmDocs = installHelmDocs;
+exports.findHelmDocs = findHelmDocs;
 const os = __importStar(__nccwpck_require__(2037));
 const path = __importStar(__nccwpck_require__(1017));
 const util = __importStar(__nccwpck_require__(3837));
@@ -35101,7 +35103,6 @@ function getHelmDocs(version) {
     const archKey = osArch === 'arm64' ? 'arm64' : 'x86_64';
     return util.format('https://github.com/norwoodj/%s/releases/download/%s/%s_%s_%s_%s.tar.gz', helmDocs, version, helmDocs, version.substring(1), platformKey, archKey);
 }
-exports.getHelmDocs = getHelmDocs;
 async function installHelmDocs(version) {
     let cachedToolPath = tc.find(helmDocs, version);
     if (!cachedToolPath) {
@@ -35114,7 +35115,6 @@ async function installHelmDocs(version) {
     fs.chmodSync(helmDocsPath, '777');
     return helmDocsPath;
 }
-exports.installHelmDocs = installHelmDocs;
 function findHelmDocs(helmDocsFolder) {
     fs.chmodSync(helmDocsFolder, '777');
     const files = fs.readdirSync(helmDocsFolder);
@@ -35132,7 +35132,6 @@ function findHelmDocs(helmDocsFolder) {
     }
     return path.join(helmDocsFolder, foundFiles[0]);
 }
-exports.findHelmDocs = findHelmDocs;
 
 
 /***/ }),
@@ -35166,7 +35165,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = void 0;
+exports.run = run;
 const path = __importStar(__nccwpck_require__(1017));
 const install_1 = __nccwpck_require__(1649);
 const core = __importStar(__nccwpck_require__(2186));
@@ -35233,7 +35232,6 @@ async function run() {
             core.setFailed(error.message);
     }
 }
-exports.run = run;
 
 
 /***/ }),
