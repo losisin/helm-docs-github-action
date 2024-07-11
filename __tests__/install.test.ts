@@ -16,7 +16,7 @@ jest.mock('@actions/tool-cache', () => ({
 }))
 
 const helmDocs = 'helm-docs'
-const version = 'v1.13.1'
+const version = 'v1.14.2'
 
 describe('getHelmDocs tests', () => {
   beforeEach(() => {

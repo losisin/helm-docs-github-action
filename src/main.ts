@@ -4,7 +4,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import { simpleGit } from 'simple-git'
 
-const version = 'v1.13.1'
+const version = 'v1.14.2'
 
 /**
  * The main function for the action.
@@ -15,6 +15,7 @@ export async function run(): Promise<void> {
     const chartSearchRoot = core.getInput('chart-search-root')
     const valuesFile = core.getInput('values-file')
     const outputFile = core.getInput('output-file')
+    const templateFiles = core.getInput('template-files')
     const gitPush = core.getInput('git-push')
     const gitPushUserName = core.getInput('git-push-user-name')
     const gitPushUserEmail = core.getInput('git-push-user-email')
@@ -31,14 +32,23 @@ export async function run(): Promise<void> {
     core.info(`helm-docs binary '${version}' has been cached at ${cachedPath}`)
     core.setOutput('helm-docs', cachedPath)
 
-    await exec.exec('helm-docs', [
+    const templateFilesArray = templateFiles.split(',').map(file => file.trim())
+
+    const args = [
       '--values-file',
       valuesFile,
       '--output-file',
       outputFile,
       '--chart-search-root',
       chartSearchRoot
-    ])
+    ]
+
+    for (const templateFile of templateFilesArray) {
+      args.push('--template-files')
+      args.push(templateFile)
+    }
+
+    await exec.exec('helm-docs', args)
 
     const git = simpleGit()
     const statusSummary = await git.status()

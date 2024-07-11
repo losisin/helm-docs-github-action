@@ -36,6 +36,7 @@ jobs:
 | `chart-search-root` | The root directory to search recursively within for charts | `.` | false |
 | `values-file` | Path to values file | `values.yaml` | false |
 | `output-file` | Markdown file path relative to each chart directory to which rendered documentation will be written | `README.md` | false |
+| `template-files` | Comma separated list of template files to render | `README.md.gotmpl` | false |
 | `git-push` | If true it will commit and push the changes (ignored if `fail-on-diff` is set) | `false` | false |
 | `git-push-user-name` | If empty the name of the GitHub Actions bot will be used | `github-actions[bot]` | false |
 | `git-push-user-email` | If empty the no-reply email of the GitHub Actions bot will be used | `github-actions[bot]@users.noreply.github.com` | false |
