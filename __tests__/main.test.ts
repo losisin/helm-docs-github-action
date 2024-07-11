@@ -56,6 +56,7 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('values-file')
     expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
     expect(getInputMock).toHaveBeenCalledWith('output-file')
+    expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
@@ -69,7 +70,8 @@ describe('run function', () => {
       'fail-on-diff': 'true',
       'output-file': 'README.md',
       'values-file': 'values.yaml',
-      'chart-search-root': '.'
+      'chart-search-root': '.',
+      'template-files': 'README.md.gotmpl'
     }
 
     getInputMock.mockImplementation((inputName: string) => {
@@ -90,6 +92,7 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('values-file')
     expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
     expect(getInputMock).toHaveBeenCalledWith('output-file')
+    expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
@@ -106,7 +109,8 @@ describe('run function', () => {
       'git-commit-message': 'message',
       'output-file': 'README.md',
       'values-file': 'values.yaml',
-      'chart-search-root': '.'
+      'chart-search-root': '.',
+      'template-files': 'README.md.gotmpl'
     }
 
     getInputMock.mockImplementation((inputName: string) => {
@@ -127,10 +131,11 @@ describe('run function', () => {
 
     await run()
 
-    expect(installHelmDocsMock).toHaveBeenCalledWith('v1.13.1')
+    expect(installHelmDocsMock).toHaveBeenCalledWith('v1.14.2')
     expect(getInputMock).toHaveBeenCalledWith('values-file')
     expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
     expect(getInputMock).toHaveBeenCalledWith('output-file')
+    expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('git-push')
     expect(getInputMock).toHaveBeenCalledWith('git-push-user-name')
     expect(getInputMock).toHaveBeenCalledWith('git-push-user-email')
@@ -175,7 +180,8 @@ describe('run function', () => {
       'fail-on-diff': 'false',
       'output-file': 'README.md',
       'values-file': 'values.yaml',
-      'chart-search-root': '.'
+      'chart-search-root': '.',
+      'template-files': 'README.md.gotmpl'
     }
 
     getInputMock.mockImplementation((inputName: string) => {
@@ -196,6 +202,7 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('values-file')
     expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
     expect(getInputMock).toHaveBeenCalledWith('output-file')
+    expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('git-push')
     expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)

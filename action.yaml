@@ -14,6 +14,10 @@ inputs:
     description: Markdown file path relative to each chart directory to which rendered documentation will be written
     required: false
     default: "README.md"
+  template-files:
+    description: Comma separated list of template files to render
+    required: false
+    default: "README.md.gotmpl"
   git-push:
     description: If true it will commit and push the changes (ignored if `fail-on-diff` is set)
     required: false
