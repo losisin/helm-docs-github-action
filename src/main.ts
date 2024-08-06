@@ -26,8 +26,9 @@ export async function run(): Promise<void> {
     const cachedPath = await installHelmDocs(version)
     core.endGroup()
 
-    process.env['PATH']?.startsWith(path.dirname(cachedPath)) ||
+    if (!process.env['PATH']?.startsWith(path.dirname(cachedPath))) {
       core.addPath(path.dirname(cachedPath))
+    }
 
     core.info(`helm-docs binary '${version}' has been cached at ${cachedPath}`)
     core.setOutput('helm-docs', cachedPath)
