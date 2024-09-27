@@ -16,6 +16,7 @@ export async function run(): Promise<void> {
     const valuesFile = core.getInput('values-file')
     const outputFile = core.getInput('output-file')
     const templateFiles = core.getInput('template-files')
+    const sortValuesOrder = core.getInput('sort-values-order')
     const gitPush = core.getInput('git-push')
     const gitPushUserName = core.getInput('git-push-user-name')
     const gitPushUserEmail = core.getInput('git-push-user-email')
@@ -43,6 +44,11 @@ export async function run(): Promise<void> {
       '--chart-search-root',
       chartSearchRoot
     ]
+
+    if (sortValuesOrder) {
+      args.push('--sort-values-order')
+      args.push(sortValuesOrder)
+    }
 
     for (const templateFile of templateFilesArray) {
       args.push('--template-files')
