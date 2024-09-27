@@ -18,6 +18,10 @@ inputs:
     description: Comma separated list of template files to render
     required: false
     default: "README.md.gotmpl"
+  sort-values-order:
+    description: Order in which to sort the values table
+    required: false
+    default: ""
   git-push:
     description: If true it will commit and push the changes (ignored if `fail-on-diff` is set)
     required: false
