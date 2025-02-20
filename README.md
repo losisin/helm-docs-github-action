@@ -19,9 +19,10 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Run helm-docs
         uses: losisin/helm-docs-github-action@v1
 ```
@@ -64,19 +65,28 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Run helm-docs
         uses: losisin/helm-docs-github-action@v1
         with:
           fail-on-diff: true
 ```
 
+
 ### Auto commit generated documentation
 
 > [!NOTE]
-> This options are ignored if `fail-on-diff: true`.
+> For pull requests from a forked repo to the base repo,
+> `git-push` will fail to push to the forked repo,
+> unless you pass `Personal access tokens` of the forked repo owners
+> to the base repo and map them to `head.repo`.
+> Consider using `fail-on-diff: true` in this case.
+
+> [!NOTE]
+> The `git-push` option is ignored if `fail-on-diff: true`.
 
 To automatically commit the generated documentation, add the following step to your workflow:
 
@@ -88,9 +98,10 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Run helm-docs
         uses: losisin/helm-docs-github-action@v1
         with:
@@ -107,9 +118,10 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: Run helm-docs
         uses: losisin/helm-docs-github-action@v1
         with:
