@@ -67,6 +67,12 @@ export async function run(): Promise<void> {
     if (outputStatus.length > 0) {
       switch (true) {
         case failOnDiff === 'true':
+          try {
+            const diff = await git.diff(['--', outputFile])
+            core.info(`Diff for '${outputFile}':\n${diff}`)
+          } catch {
+            core.info(`Unable to get diff for '${outputFile}'`)
+          }
           core.setFailed(`'${outputFile}' has changed`)
           break
         case gitPush === 'true':
