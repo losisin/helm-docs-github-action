@@ -100,12 +100,12 @@ describe('run function', () => {
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
 
-    expect(setFailedMock).toHaveBeenCalledWith("'README.md' has changed")
-    expect(gitMock.diff).toHaveBeenCalledWith(['--', 'README.md'])
+    expect(setFailedMock).toHaveBeenCalledWith("'./**/README.md' has changed")
+    expect(gitMock.diff).toHaveBeenCalledWith(['--', './**/README.md'])
     expect(infoMock).toHaveBeenCalledWith(
-      "Diff for 'README.md':\n- old \n+ new "
+      "Diff for './**/README.md':\n- old \n+ new "
     )
-    expect(setFailedMock).toHaveBeenCalledWith("'README.md' has changed")
+    expect(setFailedMock).toHaveBeenCalledWith("'./**/README.md' has changed")
   })
 
   it("should handle fail-on-diff === 'true' when diff fails", async () => {

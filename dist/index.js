@@ -34678,14 +34678,16 @@ async function run() {
         if (outputStatus.length > 0) {
             switch (true) {
                 case failOnDiff === 'true':
-                    try {
-                        const diff = await git.diff(['--', outputFile]);
-                        core.info(`Diff for '${outputFile}':\n${diff}`);
+                    for (const file of outputStatus) {
+                        try {
+                            const diff = await git.diff(['--', file.path]);
+                            core.info(`Diff for '${file.path}':\n${diff}`);
+                        }
+                        catch {
+                            core.info(`Unable to get diff for '${file.path}'`);
+                        }
+                        core.setFailed(`'${file.path}' has changed`);
                     }
-                    catch {
-                        core.info(`Unable to get diff for '${outputFile}'`);
-                    }
-                    core.setFailed(`'${outputFile}' has changed`);
                     break;
                 case gitPush === 'true':
                     await git.addConfig('user.name', gitPushUserName);
