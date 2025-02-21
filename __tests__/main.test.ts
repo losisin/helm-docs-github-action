@@ -82,7 +82,8 @@ describe('run function', () => {
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
         files: [{ path: './**/README.md' }]
-      })
+      }),
+      diff: jest.fn().mockResolvedValue('- old \n+ new ')
     } as any
 
     simpleGitMock.mockReturnValue(gitMock)
@@ -99,7 +100,36 @@ describe('run function', () => {
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
 
-    expect(setFailedMock).toHaveBeenCalledWith("'README.md' has changed")
+    expect(setFailedMock).toHaveBeenCalledWith("'./**/README.md' has changed")
+    expect(gitMock.diff).toHaveBeenCalledWith(['--', './**/README.md'])
+    expect(infoMock).toHaveBeenCalledWith(
+      "Diff for './**/README.md':\n- old \n+ new "
+    )
+    expect(setFailedMock).toHaveBeenCalledWith("'./**/README.md' has changed")
+  })
+
+  it("should handle fail-on-diff === 'true' when diff fails", async () => {
+    installHelmDocsMock.mockResolvedValue('/mocked/path')
+    getInputMock.mockImplementation((inputName: string) => {
+      if (inputName === 'fail-on-diff') {
+        return 'true'
+      }
+      return 'README.md'
+    })
+
+    const gitMock: jest.Mocked<SimpleGit> = {
+      status: jest.fn().mockResolvedValue({
+        files: [{ path: 'README.md' }]
+      }),
+      diff: jest.fn().mockRejectedValue(new Error('diff failed'))
+    } as any
+
+    simpleGitMock.mockReturnValue(gitMock)
+
+    await run()
+
+    expect(gitMock.diff).toHaveBeenCalledWith(['--', 'README.md'])
+    expect(infoMock).toHaveBeenCalledWith("Unable to get diff for 'README.md'")
   })
 
   it("should handle git-push === 'true'", async () => {
