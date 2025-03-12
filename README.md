@@ -44,6 +44,7 @@ jobs:
 | `git-push-user-email` | If empty the no-reply email of the GitHub Actions bot will be used | `github-actions[bot]@users.noreply.github.com` | false |
 | `git-commit-message` | Commit message | `update Helm documentation` | false |
 | `fail-on-diff` | Fail the job if there is any diff found between the generated output and existing file | `false` | false |
+| `version` | The version of helm-docs to install and use | `v1.14.2` | false |
 
 ## Outputs
 
