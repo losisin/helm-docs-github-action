@@ -19,6 +19,7 @@ jest.mock('../src/install')
 
 describe('run function', () => {
   let getInputMock: jest.SpyInstance
+  let getBooleanInputMock: jest.SpyInstance
   let setFailedMock: jest.SpyInstance
   let execMock: jest.SpyInstance
   let simpleGitMock: jest.MockedFunction<typeof simpleGit>
@@ -30,6 +31,7 @@ describe('run function', () => {
     jest.restoreAllMocks()
 
     getInputMock = jest.spyOn(core, 'getInput')
+    getBooleanInputMock = jest.spyOn(core, 'getBooleanInput')
     setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
     infoMock = jest.spyOn(core, 'info').mockImplementation()
     setFailedMock = jest.spyOn(core, 'setFailed')
@@ -58,7 +60,7 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('output-file')
     expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
+    expect(getBooleanInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
 
@@ -78,6 +80,9 @@ describe('run function', () => {
     getInputMock.mockImplementation((inputName: string) => {
       return inputMap[inputName]
     })
+    getBooleanInputMock.mockImplementation((inputName: string) => {
+      return (inputName == "fail-on-diff")? true: false
+    })
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
@@ -96,7 +101,7 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('output-file')
     expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
+    expect(getBooleanInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
 
@@ -110,11 +115,8 @@ describe('run function', () => {
 
   it("should handle fail-on-diff === 'true' when diff fails", async () => {
     installHelmDocsMock.mockResolvedValue('/mocked/path')
-    getInputMock.mockImplementation((inputName: string) => {
-      if (inputName === 'fail-on-diff') {
-        return 'true'
-      }
-      return 'README.md'
+    getBooleanInputMock.mockImplementation((inputName: string) => {
+      return (inputName == "fail-on-diff")? true: false
     })
 
     const gitMock: jest.Mocked<SimpleGit> = {
@@ -148,6 +150,10 @@ describe('run function', () => {
     getInputMock.mockImplementation((inputName: string) => {
       return inputMap[inputName]
     })
+    getBooleanInputMock.mockImplementation((inputName: string) => {
+      return (inputName == "git-push")? true: false
+    })
+
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
@@ -169,7 +175,7 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('output-file')
     expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getInputMock).toHaveBeenCalledWith('git-push')
+    expect(getBooleanInputMock).toHaveBeenCalledWith('git-push')
     expect(getInputMock).toHaveBeenCalledWith('git-push-user-name')
     expect(getInputMock).toHaveBeenCalledWith('git-push-user-email')
     expect(getInputMock).toHaveBeenCalledWith('git-commit-message')
@@ -216,7 +222,8 @@ describe('run function', () => {
       'chart-search-root': '.',
       'template-files': 'README.md.gotmpl'
     }
-
+    
+    getBooleanInputMock.mockReturnValue(false)
     getInputMock.mockImplementation((inputName: string) => {
       return inputMap[inputName]
     })
@@ -237,8 +244,8 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('output-file')
     expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getInputMock).toHaveBeenCalledWith('git-push')
-    expect(getInputMock).toHaveBeenCalledWith('fail-on-diff')
+    expect(getBooleanInputMock).toHaveBeenCalledWith('git-push')
+    expect(getBooleanInputMock).toHaveBeenCalledWith('fail-on-diff')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
     expect(infoMock).toHaveBeenLastCalledWith(
