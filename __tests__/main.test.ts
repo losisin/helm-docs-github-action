@@ -81,7 +81,7 @@ describe('run function', () => {
       return inputMap[inputName]
     })
     getBooleanInputMock.mockImplementation((inputName: string) => {
-      return (inputName == "fail-on-diff")? true: false
+      return inputName == 'fail-on-diff' ? true : false
     })
 
     const gitMock: jest.Mocked<SimpleGit> = {
@@ -116,7 +116,7 @@ describe('run function', () => {
   it("should handle fail-on-diff === 'true' when diff fails", async () => {
     installHelmDocsMock.mockResolvedValue('/mocked/path')
     getBooleanInputMock.mockImplementation((inputName: string) => {
-      return (inputName == "fail-on-diff")? true: false
+      return inputName == 'fail-on-diff' ? true : false
     })
 
     const gitMock: jest.Mocked<SimpleGit> = {
@@ -151,9 +151,8 @@ describe('run function', () => {
       return inputMap[inputName]
     })
     getBooleanInputMock.mockImplementation((inputName: string) => {
-      return (inputName == "git-push")? true: false
+      return inputName == 'git-push' ? true : false
     })
-
 
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({
@@ -222,7 +221,7 @@ describe('run function', () => {
       'chart-search-root': '.',
       'template-files': 'README.md.gotmpl'
     }
-    
+
     getBooleanInputMock.mockReturnValue(false)
     getInputMock.mockImplementation((inputName: string) => {
       return inputMap[inputName]

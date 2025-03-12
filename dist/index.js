@@ -34629,7 +34629,7 @@ const install_1 = __nccwpck_require__(232);
 const core = __importStar(__nccwpck_require__(7484));
 const exec = __importStar(__nccwpck_require__(5236));
 const simple_git_1 = __nccwpck_require__(9065);
-const version = 'v1.14.2';
+const DefaultVersion = 'v1.14.2';
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -34641,11 +34641,12 @@ async function run() {
         const outputFile = core.getInput('output-file');
         const templateFiles = core.getInput('template-files');
         const sortValuesOrder = core.getInput('sort-values-order');
-        const gitPush = core.getInput('git-push');
+        const gitPush = core.getBooleanInput('git-push');
         const gitPushUserName = core.getInput('git-push-user-name');
         const gitPushUserEmail = core.getInput('git-push-user-email');
         const gitCommitMessage = core.getInput('git-commit-message');
-        const failOnDiff = core.getInput('fail-on-diff');
+        const failOnDiff = core.getBooleanInput('fail-on-diff');
+        const version = core.getInput('version') || DefaultVersion;
         core.startGroup(`Downloading helm-docs ${version}`);
         const cachedPath = await (0, install_1.installHelmDocs)(version);
         core.endGroup();
@@ -34677,7 +34678,7 @@ async function run() {
         const outputStatus = statusSummary.files.filter(file => file.path.endsWith(outputFile));
         if (outputStatus.length > 0) {
             switch (true) {
-                case failOnDiff === 'true':
+                case failOnDiff:
                     for (const file of outputStatus) {
                         try {
                             const diff = await git.diff(['--', file.path]);
@@ -34689,7 +34690,7 @@ async function run() {
                         core.setFailed(`'${file.path}' has changed`);
                     }
                     break;
-                case gitPush === 'true':
+                case gitPush:
                     await git.addConfig('user.name', gitPushUserName);
                     await git.addConfig('user.email', gitPushUserEmail);
                     for (const file of outputStatus) {
