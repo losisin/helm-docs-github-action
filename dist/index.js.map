@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sources":["../src/index.ts"],"sourcesContent":["/**\n * The entrypoint for the action.\n */\nimport { run } from './main'\n\nrun()\n"],"names":[],"mappings":";AAAA;;AAEG;AACH,MAA4B,MAAA,GAAA,OAAA,CAAA,QAAA,CAAA;AAE5B,IAAA,MAAA,CAAA,GAAG,GAAE"}

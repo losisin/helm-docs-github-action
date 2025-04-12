@@ -35,7 +35,9 @@ export async function run(): Promise<void> {
     core.info(`helm-docs binary '${version}' has been cached at ${cachedPath}`)
     core.setOutput('helm-docs', cachedPath)
 
-    const templateFilesArray = templateFiles.split(',').map(file => file.trim())
+    const templateFilesArray = templateFiles
+      .split(',')
+      .map((file) => file.trim())
 
     const args = [
       '--values-file',
@@ -61,7 +63,7 @@ export async function run(): Promise<void> {
     const git = simpleGit()
     const statusSummary = await git.status()
 
-    const outputStatus = statusSummary.files.filter(file =>
+    const outputStatus = statusSummary.files.filter((file) =>
       file.path.endsWith(outputFile)
     )
 

@@ -144,7 +144,8 @@ describe('run function', () => {
       'output-file': 'README.md',
       'values-file': 'values.yaml',
       'chart-search-root': '.',
-      'template-files': 'README.md.gotmpl'
+      'template-files': 'README.md.gotmpl',
+      'version': 'v1.14.2'
     }
 
     getInputMock.mockImplementation((inputName: string) => {
