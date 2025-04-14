@@ -22,13 +22,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: [
-      '**/coverage',
-      '**/dist',
-      '**/linter',
-      '**/node_modules',
-      '**/__tests__'
-    ]
+    ignores: ['**/coverage', '**/dist', '**/linter', '**/node_modules']
   },
   ...compat.extends(
     'eslint:recommended',

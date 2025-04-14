@@ -47,9 +47,9 @@ describe('run function', () => {
   it('should handle success scenario', async () => {
     installHelmDocsMock.mockResolvedValue('/mocked/path')
     getInputMock.mockReturnValue('false')
-    const gitMock: jest.Mocked<SimpleGit> = {
+    const gitMock = {
       status: jest.fn().mockResolvedValue({ files: [] })
-    } as any
+    } as unknown as SimpleGit
     simpleGitMock.mockReturnValue(gitMock)
 
     await run()
@@ -84,12 +84,12 @@ describe('run function', () => {
       return inputName == 'fail-on-diff' ? true : false
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
+    const gitMock = {
       status: jest.fn().mockResolvedValue({
         files: [{ path: './**/README.md' }]
       }),
       diff: jest.fn().mockResolvedValue('- old \n+ new ')
-    } as any
+    } as unknown as SimpleGit
 
     simpleGitMock.mockReturnValue(gitMock)
 
@@ -119,12 +119,12 @@ describe('run function', () => {
       return inputName == 'fail-on-diff' ? true : false
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
+    const gitMock = {
       status: jest.fn().mockResolvedValue({
         files: [{ path: 'README.md' }]
       }),
       diff: jest.fn().mockRejectedValue(new Error('diff failed'))
-    } as any
+    } as unknown as SimpleGit
 
     simpleGitMock.mockReturnValue(gitMock)
 
@@ -155,7 +155,7 @@ describe('run function', () => {
       return inputName == 'git-push' ? true : false
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
+    const gitMock = {
       status: jest.fn().mockResolvedValue({
         files: [{ path: './README.md' }]
       }),
@@ -163,7 +163,7 @@ describe('run function', () => {
       add: jest.fn().mockResolvedValue(undefined),
       commit: jest.fn().mockResolvedValue(undefined),
       push: jest.fn().mockResolvedValue(undefined)
-    } as any
+    } as unknown as SimpleGit
 
     simpleGitMock.mockReturnValue(gitMock)
 
@@ -228,11 +228,11 @@ describe('run function', () => {
       return inputMap[inputName]
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
+    const gitMock = {
       status: jest.fn().mockResolvedValue({
         files: [{ path: './**/README.md' }]
       })
-    } as any
+    } as unknown as SimpleGit
 
     simpleGitMock.mockReturnValue(gitMock)
 
