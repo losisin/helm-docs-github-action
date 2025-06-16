@@ -251,4 +251,31 @@ describe('run function', () => {
       "'README.md' has changed, but no action was requested."
     )
   })
+
+  it('should not add cached path to PATH when already present', async () => {
+    const originalPath = process.env.PATH
+    const cachedPath = '/mocked/path/schema'
+    const cachedPathDir = '/mocked/path'
+
+    process.env.PATH = `${cachedPathDir}:/usr/bin:/bin`
+    installHelmDocsMock.mockResolvedValue(cachedPath)
+
+    const addPathMock = jest.spyOn(core, 'addPath')
+
+    await run()
+
+    expect(addPathMock).not.toHaveBeenCalled()
+
+    process.env.PATH = originalPath
+  })
+
+  it('should handle non-Error instance without setting failed', async () => {
+    const nonError = 'This is not an Error instance'
+
+    installHelmDocsMock.mockRejectedValue(nonError)
+
+    await run()
+
+    expect(setFailedMock).not.toHaveBeenCalled()
+  })
 })
