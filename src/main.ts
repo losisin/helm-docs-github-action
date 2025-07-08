@@ -17,6 +17,7 @@ export async function run(): Promise<void> {
     const outputFile = core.getInput('output-file')
     const templateFiles = core.getInput('template-files')
     const sortValuesOrder = core.getInput('sort-values-order')
+    const skipVersionFooter = core.getInput('skip-version-footer')
     const gitPush = core.getBooleanInput('git-push')
     const gitPushUserName = core.getInput('git-push-user-name')
     const gitPushUserEmail = core.getInput('git-push-user-email')
@@ -49,6 +50,10 @@ export async function run(): Promise<void> {
     if (sortValuesOrder) {
       args.push('--sort-values-order')
       args.push(sortValuesOrder)
+    }
+
+    if (skipVersionFooter) {
+      args.push('--skip-version-footer')
     }
 
     for (const templateFile of templateFilesArray) {
