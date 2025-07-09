@@ -22,6 +22,10 @@ inputs:
     description: Order in which to sort the values table
     required: false
     default: ""
+  skip-version-footer:
+    description: If true the helm-docs version footer will not be shown in the default README template
+    required: false
+    default: 'false'
   git-push:
     description: If true it will commit and push the changes (ignored if `fail-on-diff` is set)
     required: false
