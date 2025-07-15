@@ -34616,7 +34616,7 @@ async function run() {
         const outputFile = core.getInput('output-file');
         const templateFiles = core.getInput('template-files');
         const sortValuesOrder = core.getInput('sort-values-order');
-        const skipVersionFooter = core.getInput('skip-version-footer');
+        const skipVersionFooter = core.getBooleanInput('skip-version-footer');
         const gitPush = core.getBooleanInput('git-push');
         const gitPushUserName = core.getInput('git-push-user-name');
         const gitPushUserEmail = core.getInput('git-push-user-email');
