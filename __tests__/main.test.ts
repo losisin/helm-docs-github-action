@@ -47,6 +47,10 @@ describe('run function', () => {
   it('should handle success scenario', async () => {
     installHelmDocsMock.mockResolvedValue('/mocked/path')
     getInputMock.mockReturnValue('false')
+    getBooleanInputMock.mockImplementation((inputName: string) => {
+      return inputName == 'skip-version-footer' ? true : false
+    })
+
     const gitMock: jest.Mocked<SimpleGit> = {
       status: jest.fn().mockResolvedValue({ files: [] })
     } as any
@@ -61,9 +65,9 @@ describe('run function', () => {
     expect(getInputMock).toHaveBeenCalledWith('template-files')
     expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
     expect(getBooleanInputMock).toHaveBeenCalledWith('fail-on-diff')
+    expect(getBooleanInputMock).toHaveBeenCalledWith('skip-version-footer')
     expect(execMock).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
-
     expect(infoMock).toHaveBeenCalledWith("'false' is up to date.")
   })
 
