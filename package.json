@@ -69,11 +69,11 @@
     "@actions/core": "^1.11.1",
     "@actions/exec": "^1.1.1",
     "@actions/tool-cache": "^2.0.2",
-    "simple-git": "^3.28.0"
+    "simple-git": "^3.30.0"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.9.1",
+    "@types/node": "^24.10.0",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.39.1",
     "@vercel/ncc": "^0.38.4",
