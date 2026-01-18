@@ -46,6 +46,10 @@ inputs:
     description: Fail the job if there is any diff found between the generated output and existing file
     required: false
     default: 'false'
+  version:
+    description: The version of helm-docs to install and use	
+    required: false
+    default: 'v1.14.2'
 outputs:
    helm-docs-path:
       description: 'Path to the cached helm-docs binary'
