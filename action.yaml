@@ -54,7 +54,7 @@ outputs:
    helm-docs-path:
       description: 'Path to the cached helm-docs binary'
 runs:
-  using: node20
+  using: node24
   main: dist/index.js
 branding:
   icon: file-text
