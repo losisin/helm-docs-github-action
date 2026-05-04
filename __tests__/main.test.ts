@@ -1,78 +1,106 @@
 /**
  * Unit tests for the action's main functionality, src/main.ts
  *
- * These should be run as if the action was called from a workflow.
- * Specifically, the inputs listed in `action.yml` should be set as environment
- * variables following the pattern `INPUT_<INPUT_NAME>`.
+ * To mock dependencies in ESM, fixtures export mock functions. Mocks are
+ * registered with jest.unstable_mockModule before the module under test is
+ * imported dynamically.
  */
-import { run } from '../src/main'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  jest
+} from '@jest/globals'
+import type { FileStatusResult, SimpleGit, StatusResult } from 'simple-git'
+import * as core from '../__fixtures__/core.js'
+import * as exec from '../__fixtures__/exec.js'
+import * as installMod from '../__fixtures__/install-helm-docs.js'
+import * as simpleGitModule from '../__fixtures__/simple-git.js'
 
-import * as core from '@actions/core'
-import * as exec from '@actions/exec'
-import { simpleGit, SimpleGit } from 'simple-git'
-import { installHelmDocs } from '../src/install'
+jest.unstable_mockModule('@actions/core', () => core)
+jest.unstable_mockModule('@actions/exec', () => exec)
+jest.unstable_mockModule('simple-git', () => simpleGitModule)
+jest.unstable_mockModule('../src/install.js', () => installMod)
 
-jest.mock('@actions/core')
-jest.mock('@actions/exec')
-jest.mock('simple-git')
-jest.mock('../src/install')
+function mockFileStatus(path: string): FileStatusResult {
+  return { path, index: ' ', working_dir: 'M' }
+}
+
+function mockStatusResult(files: FileStatusResult[]): StatusResult {
+  return {
+    not_added: [],
+    conflicted: [],
+    created: [],
+    deleted: [],
+    modified: [],
+    renamed: [],
+    staged: [],
+    files,
+    ahead: 0,
+    behind: 0,
+    current: null,
+    tracking: null,
+    detached: false,
+    isClean: () => files.length === 0
+  }
+}
+
+const { run } = await import('../src/main.js')
 
 describe('run function', () => {
-  let getInputMock: jest.SpyInstance
-  let getBooleanInputMock: jest.SpyInstance
-  let setFailedMock: jest.SpyInstance
-  let execMock: jest.SpyInstance
-  let simpleGitMock: jest.MockedFunction<typeof simpleGit>
-  let installHelmDocsMock: jest.MockedFunction<typeof installHelmDocs>
-  let setOutputMock: jest.SpyInstance
-  let infoMock: jest.SpyInstance
-
   beforeEach(() => {
-    jest.restoreAllMocks()
+    exec.exec.mockResolvedValue(0)
+    core.getInput.mockImplementation((name: string) => {
+      const defaults: Record<string, string> = {
+        'chart-search-root': '.',
+        'values-file': 'values.yaml',
+        'output-file': 'README.md',
+        'template-files': 'README.md.gotmpl',
+        'sort-values-order': '',
+        version: ''
+      }
+      return defaults[name] ?? ''
+    })
+    core.getBooleanInput.mockReturnValue(false)
+  })
 
-    getInputMock = jest.spyOn(core, 'getInput')
-    getBooleanInputMock = jest.spyOn(core, 'getBooleanInput')
-    setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
-    infoMock = jest.spyOn(core, 'info').mockImplementation()
-    setFailedMock = jest.spyOn(core, 'setFailed')
-    execMock = jest.spyOn(exec, 'exec').mockImplementation()
-    simpleGitMock = simpleGit as unknown as jest.MockedFunction<
-      typeof simpleGit
-    >
-    installHelmDocsMock = installHelmDocs as unknown as jest.MockedFunction<
-      typeof installHelmDocs
-    >
+  afterEach(() => {
+    jest.resetAllMocks()
   })
 
   it('should handle success scenario', async () => {
-    installHelmDocsMock.mockResolvedValue('/mocked/path')
-    getInputMock.mockReturnValue('false')
-    getBooleanInputMock.mockImplementation((inputName: string) => {
+    installMod.installHelmDocs.mockResolvedValue('/mocked/path')
+    core.getInput.mockReturnValue('false')
+    core.getBooleanInput.mockImplementation((inputName: string) => {
       return inputName == 'skip-version-footer' ? true : false
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
-      status: jest.fn().mockResolvedValue({ files: [] })
-    } as any
-    simpleGitMock.mockReturnValue(gitMock)
+    const gitMock = {
+      status: jest
+        .fn<() => Promise<StatusResult>>()
+        .mockResolvedValue(mockStatusResult([]))
+    } as unknown as jest.Mocked<SimpleGit>
+    simpleGitModule.simpleGit.mockReturnValue(gitMock)
 
     await run()
 
-    expect(installHelmDocsMock).toHaveBeenCalledTimes(1)
-    expect(getInputMock).toHaveBeenCalledWith('values-file')
-    expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
-    expect(getInputMock).toHaveBeenCalledWith('output-file')
-    expect(getInputMock).toHaveBeenCalledWith('template-files')
-    expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getBooleanInputMock).toHaveBeenCalledWith('fail-on-diff')
-    expect(getBooleanInputMock).toHaveBeenCalledWith('skip-version-footer')
-    expect(execMock).toHaveBeenCalledTimes(1)
+    expect(installMod.installHelmDocs).toHaveBeenCalledTimes(1)
+    expect(core.getInput).toHaveBeenCalledWith('values-file')
+    expect(core.getInput).toHaveBeenCalledWith('chart-search-root')
+    expect(core.getInput).toHaveBeenCalledWith('output-file')
+    expect(core.getInput).toHaveBeenCalledWith('template-files')
+    expect(core.getInput).toHaveBeenCalledWith('sort-values-order')
+    expect(core.getBooleanInput).toHaveBeenCalledWith('fail-on-diff')
+    expect(core.getBooleanInput).toHaveBeenCalledWith('skip-version-footer')
+    expect(exec.exec).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
-    expect(infoMock).toHaveBeenCalledWith("'false' is up to date.")
+    expect(core.info).toHaveBeenCalledWith("'false' is up to date.")
   })
 
   it("should handle fail-on-diff === 'true'", async () => {
-    installHelmDocsMock.mockResolvedValue('/mocked/path')
+    installMod.installHelmDocs.mockResolvedValue('/mocked/path')
     const inputMap: { [key: string]: string } = {
       'fail-on-diff': 'true',
       'output-file': 'README.md',
@@ -81,65 +109,71 @@ describe('run function', () => {
       'template-files': 'README.md.gotmpl'
     }
 
-    getInputMock.mockImplementation((inputName: string) => {
+    core.getInput.mockImplementation((inputName: string) => {
       return inputMap[inputName]
     })
-    getBooleanInputMock.mockImplementation((inputName: string) => {
+    core.getBooleanInput.mockImplementation((inputName: string) => {
       return inputName == 'fail-on-diff' ? true : false
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
-      status: jest.fn().mockResolvedValue({
-        files: [{ path: './**/README.md' }]
-      }),
-      diff: jest.fn().mockResolvedValue('- old \n+ new ')
-    } as any
+    const gitMock = {
+      status: jest
+        .fn<() => Promise<StatusResult>>()
+        .mockResolvedValue(
+          mockStatusResult([mockFileStatus('./**/README.md')])
+        ),
+      diff: jest
+        .fn<(args?: string | string[]) => Promise<string>>()
+        .mockResolvedValue('- old \n+ new ')
+    } as unknown as jest.Mocked<SimpleGit>
 
-    simpleGitMock.mockReturnValue(gitMock)
+    simpleGitModule.simpleGit.mockReturnValue(gitMock)
 
     await run()
 
-    expect(installHelmDocsMock).toHaveBeenCalledTimes(1)
-    expect(getInputMock).toHaveBeenCalledWith('values-file')
-    expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
-    expect(getInputMock).toHaveBeenCalledWith('output-file')
-    expect(getInputMock).toHaveBeenCalledWith('template-files')
-    expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getBooleanInputMock).toHaveBeenCalledWith('fail-on-diff')
-    expect(execMock).toHaveBeenCalledTimes(1)
+    expect(installMod.installHelmDocs).toHaveBeenCalledTimes(1)
+    expect(core.getInput).toHaveBeenCalledWith('values-file')
+    expect(core.getInput).toHaveBeenCalledWith('chart-search-root')
+    expect(core.getInput).toHaveBeenCalledWith('output-file')
+    expect(core.getInput).toHaveBeenCalledWith('template-files')
+    expect(core.getInput).toHaveBeenCalledWith('sort-values-order')
+    expect(core.getBooleanInput).toHaveBeenCalledWith('fail-on-diff')
+    expect(exec.exec).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
 
-    expect(setFailedMock).toHaveBeenCalledWith("'./**/README.md' has changed")
+    expect(core.setFailed).toHaveBeenCalledWith("'./**/README.md' has changed")
     expect(gitMock.diff).toHaveBeenCalledWith(['--', './**/README.md'])
-    expect(infoMock).toHaveBeenCalledWith(
+    expect(core.info).toHaveBeenCalledWith(
       "Diff for './**/README.md':\n- old \n+ new "
     )
-    expect(setFailedMock).toHaveBeenCalledWith("'./**/README.md' has changed")
+    expect(core.setFailed).toHaveBeenCalledWith("'./**/README.md' has changed")
   })
 
   it("should handle fail-on-diff === 'true' when diff fails", async () => {
-    installHelmDocsMock.mockResolvedValue('/mocked/path')
-    getBooleanInputMock.mockImplementation((inputName: string) => {
+    installMod.installHelmDocs.mockResolvedValue('/mocked/path')
+    core.getBooleanInput.mockImplementation((inputName: string) => {
       return inputName == 'fail-on-diff' ? true : false
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
-      status: jest.fn().mockResolvedValue({
-        files: [{ path: 'README.md' }]
-      }),
-      diff: jest.fn().mockRejectedValue(new Error('diff failed'))
-    } as any
+    const gitMock = {
+      status: jest
+        .fn<() => Promise<StatusResult>>()
+        .mockResolvedValue(mockStatusResult([mockFileStatus('README.md')])),
+      diff: jest
+        .fn<(args?: string | string[]) => Promise<string>>()
+        .mockRejectedValue(new Error('diff failed'))
+    } as unknown as jest.Mocked<SimpleGit>
 
-    simpleGitMock.mockReturnValue(gitMock)
+    simpleGitModule.simpleGit.mockReturnValue(gitMock)
 
     await run()
 
     expect(gitMock.diff).toHaveBeenCalledWith(['--', 'README.md'])
-    expect(infoMock).toHaveBeenCalledWith("Unable to get diff for 'README.md'")
+    expect(core.info).toHaveBeenCalledWith("Unable to get diff for 'README.md'")
   })
 
   it("should handle git-push === 'true'", async () => {
-    installHelmDocsMock.mockResolvedValue('/mocked/path')
+    installMod.installHelmDocs.mockResolvedValue('/mocked/path')
     const inputMap: { [key: string]: string } = {
       'git-push': 'true',
       'git-push-user-name': 'username',
@@ -151,38 +185,44 @@ describe('run function', () => {
       'template-files': 'README.md.gotmpl'
     }
 
-    getInputMock.mockImplementation((inputName: string) => {
+    core.getInput.mockImplementation((inputName: string) => {
       return inputMap[inputName]
     })
-    getBooleanInputMock.mockImplementation((inputName: string) => {
+    core.getBooleanInput.mockImplementation((inputName: string) => {
       return inputName == 'git-push' ? true : false
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
-      status: jest.fn().mockResolvedValue({
-        files: [{ path: './README.md' }]
-      }),
-      addConfig: jest.fn().mockResolvedValue(undefined),
-      add: jest.fn().mockResolvedValue(undefined),
-      commit: jest.fn().mockResolvedValue(undefined),
-      push: jest.fn().mockResolvedValue(undefined)
-    } as any
+    const gitMock = {
+      status: jest
+        .fn<() => Promise<StatusResult>>()
+        .mockResolvedValue(mockStatusResult([mockFileStatus('./README.md')])),
+      addConfig: jest
+        .fn<(key: string, value: string) => Promise<string>>()
+        .mockResolvedValue(''),
+      add: jest
+        .fn<(files: string | string[]) => Promise<string>>()
+        .mockResolvedValue(''),
+      commit: jest
+        .fn<(message: string) => Promise<string>>()
+        .mockResolvedValue(''),
+      push: jest.fn<() => Promise<string>>().mockResolvedValue('')
+    } as unknown as jest.Mocked<SimpleGit>
 
-    simpleGitMock.mockReturnValue(gitMock)
+    simpleGitModule.simpleGit.mockReturnValue(gitMock)
 
     await run()
 
-    expect(installHelmDocsMock).toHaveBeenCalledWith('v1.14.2')
-    expect(getInputMock).toHaveBeenCalledWith('values-file')
-    expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
-    expect(getInputMock).toHaveBeenCalledWith('output-file')
-    expect(getInputMock).toHaveBeenCalledWith('template-files')
-    expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getBooleanInputMock).toHaveBeenCalledWith('git-push')
-    expect(getInputMock).toHaveBeenCalledWith('git-push-user-name')
-    expect(getInputMock).toHaveBeenCalledWith('git-push-user-email')
-    expect(getInputMock).toHaveBeenCalledWith('git-commit-message')
-    expect(execMock).toHaveBeenCalledTimes(1)
+    expect(installMod.installHelmDocs).toHaveBeenCalledWith('v1.14.2')
+    expect(core.getInput).toHaveBeenCalledWith('values-file')
+    expect(core.getInput).toHaveBeenCalledWith('chart-search-root')
+    expect(core.getInput).toHaveBeenCalledWith('output-file')
+    expect(core.getInput).toHaveBeenCalledWith('template-files')
+    expect(core.getInput).toHaveBeenCalledWith('sort-values-order')
+    expect(core.getBooleanInput).toHaveBeenCalledWith('git-push')
+    expect(core.getInput).toHaveBeenCalledWith('git-push-user-name')
+    expect(core.getInput).toHaveBeenCalledWith('git-push-user-email')
+    expect(core.getInput).toHaveBeenCalledWith('git-commit-message')
+    expect(exec.exec).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
     expect(gitMock.addConfig).toHaveBeenNthCalledWith(
       1,
@@ -197,8 +237,8 @@ describe('run function', () => {
     expect(gitMock.add).toHaveBeenCalledWith('./README.md')
     expect(gitMock.commit).toHaveBeenCalledWith('message')
     expect(gitMock.push).toHaveBeenCalledTimes(1)
-    expect(setOutputMock).toHaveBeenCalledWith('helm-docs', '/mocked/path')
-    expect(infoMock).toHaveBeenLastCalledWith(
+    expect(core.setOutput).toHaveBeenCalledWith('helm-docs', '/mocked/path')
+    expect(core.info).toHaveBeenLastCalledWith(
       "Pushed 'README.md' to the branch."
     )
   })
@@ -206,7 +246,9 @@ describe('run function', () => {
   it('sets failure if an error is thrown', async () => {
     const errorMessage = 'Something went wrong'
 
-    jest.spyOn(exec, 'exec').mockImplementation(() => {
+    installMod.installHelmDocs.mockResolvedValue('/mocked/path')
+    core.getInput.mockImplementation(() => '')
+    exec.exec.mockImplementation(() => {
       throw new Error(errorMessage)
     })
 
@@ -216,7 +258,7 @@ describe('run function', () => {
   })
 
   it("should handle both git-push and fail-on-diff set to 'false', but documentation generated", async () => {
-    installHelmDocsMock.mockResolvedValue('/mocked/path')
+    installMod.installHelmDocs.mockResolvedValue('/mocked/path')
     const inputMap: { [key: string]: string } = {
       'git-push': 'false',
       'fail-on-diff': 'false',
@@ -226,32 +268,32 @@ describe('run function', () => {
       'template-files': 'README.md.gotmpl'
     }
 
-    getBooleanInputMock.mockReturnValue(false)
-    getInputMock.mockImplementation((inputName: string) => {
+    core.getBooleanInput.mockReturnValue(false)
+    core.getInput.mockImplementation((inputName: string) => {
       return inputMap[inputName]
     })
 
-    const gitMock: jest.Mocked<SimpleGit> = {
-      status: jest.fn().mockResolvedValue({
-        files: [{ path: './**/README.md' }]
-      })
-    } as any
+    const gitMock = {
+      status: jest
+        .fn<() => Promise<StatusResult>>()
+        .mockResolvedValue(mockStatusResult([mockFileStatus('./**/README.md')]))
+    } as unknown as jest.Mocked<SimpleGit>
 
-    simpleGitMock.mockReturnValue(gitMock)
+    simpleGitModule.simpleGit.mockReturnValue(gitMock)
 
     await run()
 
-    expect(installHelmDocsMock).toHaveBeenCalledTimes(1)
-    expect(getInputMock).toHaveBeenCalledWith('values-file')
-    expect(getInputMock).toHaveBeenCalledWith('chart-search-root')
-    expect(getInputMock).toHaveBeenCalledWith('output-file')
-    expect(getInputMock).toHaveBeenCalledWith('template-files')
-    expect(getInputMock).toHaveBeenCalledWith('sort-values-order')
-    expect(getBooleanInputMock).toHaveBeenCalledWith('git-push')
-    expect(getBooleanInputMock).toHaveBeenCalledWith('fail-on-diff')
-    expect(execMock).toHaveBeenCalledTimes(1)
+    expect(installMod.installHelmDocs).toHaveBeenCalledTimes(1)
+    expect(core.getInput).toHaveBeenCalledWith('values-file')
+    expect(core.getInput).toHaveBeenCalledWith('chart-search-root')
+    expect(core.getInput).toHaveBeenCalledWith('output-file')
+    expect(core.getInput).toHaveBeenCalledWith('template-files')
+    expect(core.getInput).toHaveBeenCalledWith('sort-values-order')
+    expect(core.getBooleanInput).toHaveBeenCalledWith('git-push')
+    expect(core.getBooleanInput).toHaveBeenCalledWith('fail-on-diff')
+    expect(exec.exec).toHaveBeenCalledTimes(1)
     expect(gitMock.status).toHaveBeenCalledTimes(1)
-    expect(infoMock).toHaveBeenLastCalledWith(
+    expect(core.info).toHaveBeenLastCalledWith(
       "'README.md' has changed, but no action was requested."
     )
   })
@@ -262,13 +304,11 @@ describe('run function', () => {
     const cachedPathDir = '/mocked/path'
 
     process.env.PATH = `${cachedPathDir}:/usr/bin:/bin`
-    installHelmDocsMock.mockResolvedValue(cachedPath)
-
-    const addPathMock = jest.spyOn(core, 'addPath')
+    installMod.installHelmDocs.mockResolvedValue(cachedPath)
 
     await run()
 
-    expect(addPathMock).not.toHaveBeenCalled()
+    expect(core.addPath).not.toHaveBeenCalled()
 
     process.env.PATH = originalPath
   })
@@ -276,10 +316,10 @@ describe('run function', () => {
   it('should handle non-Error instance without setting failed', async () => {
     const nonError = 'This is not an Error instance'
 
-    installHelmDocsMock.mockRejectedValue(nonError)
+    installMod.installHelmDocs.mockRejectedValue(nonError)
 
     await run()
 
-    expect(setFailedMock).not.toHaveBeenCalled()
+    expect(core.setFailed).not.toHaveBeenCalled()
   })
 })

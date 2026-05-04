@@ -2,27 +2,29 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "declaration": false,
-    "declarationMap": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "lib": ["ES2022"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "newLine": "lf",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "pretty": true,
     "resolveJsonModule": true,
+    "rootDir": ".",
+    "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
     "target": "ES2022",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "exclude": ["__fixtures__", "__tests__", "coverage", "dist", "node_modules"],
-  "include": ["src"]
+  "include": [
+    "src/**/*.ts",
+    "__tests__/**/*.ts",
+    "__fixtures__/**/*.ts",
+    "rollup.config.ts"
+  ],
+  "exclude": ["coverage", "dist", "node_modules"]
 }
