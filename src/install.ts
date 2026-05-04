@@ -45,7 +45,7 @@ export function findHelmDocs(helmDocsFolder: string): string {
   const executableExtension = os.type().startsWith('Win') ? '.exe' : ''
   const targetFileName = helmDocs + executableExtension
 
-  const foundFiles = files.filter(file => {
+  const foundFiles = files.filter((file) => {
     const filePath = path.join(helmDocsFolder, file)
     if (fs.statSync(filePath).isDirectory()) {
       return false
