@@ -14,6 +14,40 @@ const compat = new FlatCompat({
   allConfig: js.configs.all
 })
 
+const sharedGlobals = {
+  ...globals.node,
+  ...globals.jest,
+  Atomics: 'readonly',
+  SharedArrayBuffer: 'readonly'
+}
+
+const sharedRules = {
+  camelcase: 'off',
+  'eslint-comments/no-use': 'off',
+  'eslint-comments/no-unused-disable': 'off',
+  'i18n-text/no-en': 'off',
+  'import/no-namespace': 'off',
+  'no-console': 'off',
+  'no-shadow': 'off',
+  'no-unused-vars': 'off',
+  'prettier/prettier': 'error'
+}
+
+const sharedSettings = {
+  'import/resolver': {
+    typescript: {
+      alwaysTryTypes: true,
+      project: 'tsconfig.json'
+    }
+  }
+}
+
+const sharedPlugins = {
+  jest,
+  prettier,
+  '@typescript-eslint': typescriptEslint
+}
+
 export default [
   {
     ignores: ['**/coverage', '**/dist', '**/linter', '**/node_modules']
@@ -26,59 +60,38 @@ export default [
     'plugin:prettier/recommended'
   ),
   {
-    plugins: {
-      jest,
-      prettier,
-      '@typescript-eslint': typescriptEslint
-    },
+    files: ['**/*.ts'],
+
+    plugins: sharedPlugins,
 
     languageOptions: {
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-        Atomics: 'readonly',
-        SharedArrayBuffer: 'readonly'
-      },
-
+      globals: sharedGlobals,
       parser: tsParser,
       ecmaVersion: 2023,
       sourceType: 'module',
-
       parserOptions: {
-        projectService: {
-          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 16,
-          allowDefaultProject: [
-            '__fixtures__/*.ts',
-            '__tests__/*.ts',
-            '__tests__/*/*.ts',
-            'eslint.config.mjs',
-            'jest.config.js',
-            'rollup.config.ts'
-          ]
-        },
+        project: ['./tsconfig.eslint.json'],
         tsconfigRootDir: import.meta.dirname
       }
     },
 
-    settings: {
-      'import/resolver': {
-        typescript: {
-          alwaysTryTypes: true,
-          project: 'tsconfig.json'
-        }
-      }
+    settings: sharedSettings,
+    rules: sharedRules
+  },
+  {
+    files: ['**/*.{js,mjs,cjs}'],
+
+    plugins: sharedPlugins,
+
+    languageOptions: {
+      globals: sharedGlobals,
+      parser: tsParser,
+      ecmaVersion: 2023,
+      sourceType: 'module',
+      parserOptions: {}
     },
 
-    rules: {
-      camelcase: 'off',
-      'eslint-comments/no-use': 'off',
-      'eslint-comments/no-unused-disable': 'off',
-      'i18n-text/no-en': 'off',
-      'import/no-namespace': 'off',
-      'no-console': 'off',
-      'no-shadow': 'off',
-      'no-unused-vars': 'off',
-      'prettier/prettier': 'error'
-    }
+    settings: sharedSettings,
+    rules: sharedRules
   }
 ]

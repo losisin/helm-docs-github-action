@@ -3,6 +3,7 @@
 import commonjs from '@rollup/plugin-commonjs'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
+import { defineConfig } from 'rollup'
 
 /**
  * @actions/* ships transpiled helpers like `(this && this.__awaiter)`; when
@@ -10,28 +11,24 @@ import typescript from '@rollup/plugin-typescript'
  * expression still short-circuits to the correct fallback. Circular imports
  * between core and oidc-utils are a known toolkit layout. We only silence
  * these for node_modules so our own code still surfaces warnings.
- *
- * @type {import('rollup').WarningHandlerWithDefault}
  */
-const onwarn = (warning, defaultHandler) => {
-  if (
-    warning.code === 'THIS_IS_UNDEFINED' &&
-    warning.id?.includes('node_modules')
-  ) {
-    return
-  }
-  if (
-    warning.code === 'CIRCULAR_DEPENDENCY' &&
-    warning.ids?.some((id) => id.includes('node_modules'))
-  ) {
-    return
-  }
-  defaultHandler(warning)
-}
-
-const config = {
+export default defineConfig({
   input: 'src/index.ts',
-  onwarn,
+  onwarn(warning, defaultHandler) {
+    if (
+      warning.code === 'THIS_IS_UNDEFINED' &&
+      warning.id?.includes('node_modules')
+    ) {
+      return
+    }
+    if (
+      warning.code === 'CIRCULAR_DEPENDENCY' &&
+      warning.ids?.some((id) => id.includes('node_modules'))
+    ) {
+      return
+    }
+    defaultHandler(warning)
+  },
   output: {
     esModule: true,
     file: 'dist/index.js',
@@ -49,6 +46,4 @@ const config = {
     nodeResolve({ preferBuiltins: true }),
     commonjs()
   ]
-}
-
-export default config
+})
